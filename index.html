@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comanda Azul</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-orb orb-one"></div>
+  <div class="bg-orb orb-two"></div>
+
+  <header class="hero">
+    <nav class="navbar">
+      <div class="brand">
+        <span class="brand-mark">CA</span>
+        <div>
+          <strong>Comanda Azul</strong>
+          <small>Mesas, balcão e extras</small>
+        </div>
+      </div>
+
+      <button id="btnAddExtra" class="btn btn-outline" type="button">+ Adicionar Extra</button>
+    </nav>
+
+    <section class="hero-content">
+      <div>
+        <p class="eyebrow">Sistema de comandas</p>
+        <h1>Controle suas vendas do dia em uma tela simples.</h1>
+        <p class="hero-text">
+          Some produtos por mesa, envie o total para o Valor do Dia, renomeie comandas e feche o caixa com reset automático.
+        </p>
+      </div>
+
+      <aside class="day-card">
+        <span>Valor do dia</span>
+        <strong id="topDayTotal">R$ 0,00</strong>
+        <small id="topDayCount">0 contas enviadas</small>
+      </aside>
+    </section>
+  </header>
+
+  <main class="container">
+    <section class="section-title">
+      <div>
+        <p class="eyebrow">Comandas abertas</p>
+        <h2>Mesas, Balcão e Extras</h2>
+      </div>
+      <div class="tip">
+        <strong>Dica:</strong> clique no nome da comanda ou no botão “Renomear” para trocar o nome durante o uso.
+      </div>
+    </section>
+
+    <section id="commandsGrid" class="commands-grid" aria-live="polite"></section>
+
+    <section class="daily-section" id="valorDoDia">
+      <div class="daily-panel">
+        <div class="daily-header">
+          <div>
+            <p class="eyebrow">Fechamento</p>
+            <h2>Valor do dia</h2>
+          </div>
+          <div class="daily-total">
+            <span>Total acumulado</span>
+            <strong id="dailyTotal">R$ 0,00</strong>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Comanda</th>
+                <th>Itens</th>
+                <th>Horário</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody id="dailyList">
+              <tr class="empty-row">
+                <td colspan="4">Nenhuma conta enviada ainda.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="daily-actions">
+          <button id="btnClearDay" class="btn btn-soft" type="button">Limpar valor do dia</button>
+          <button id="btnFinishDay" class="btn btn-primary" type="button">Concluir</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <p>© 2026 Bar Azul — Todos os direitos reservados.</p>
+  </footer>
+
+  <dialog id="editModal" class="modal">
+    <form method="dialog" class="modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Editar comanda</p>
+          <h2 id="editTitle">Comanda</h2>
+        </div>
+        <button id="btnCloseEdit" class="close-btn" type="button" aria-label="Fechar">×</button>
+      </div>
+
+      <div class="name-editor">
+        <label for="editCommandName">Nome da comanda</label>
+        <input id="editCommandName" type="text" maxlength="35" />
+      </div>
+
+      <div id="editProducts" class="edit-products"></div>
+
+      <div class="modal-actions">
+        <button id="btnCancelEdit" class="btn btn-soft" type="button">Cancelar</button>
+        <button id="btnSaveEdit" class="btn btn-primary" type="button">Salvar alterações</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
