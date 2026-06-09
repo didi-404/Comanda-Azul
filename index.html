@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comanda Azul</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-orb orb-one"></div>
+  <div class="bg-orb orb-two"></div>
+
+  <header class="hero">
+    <nav class="navbar">
+      <div class="brand">
+        <span class="brand-mark">CA</span>
+        <div>
+          <strong>Comanda Azul</strong>
+          <small>Bar Azul</small>
+        </div>
+      </div>
+
+      <button id="btnAddExtra" class="btn btn-outline" type="button">+ Adicionar Extra</button>
+    </nav>
+
+    <section class="hero-content">
+      <div>
+        <p class="eyebrow">Sistema de comandas</p>
+        <h1>Controle mesas, balcão, extras e o fechamento do dia.</h1>
+        <p class="hero-text">
+          Os valores do fechamento ficam ocultos na tela do Valor do Dia. Ao concluir, o sistema gera um PDF com todas as informações e faz o reset automático.
+        </p>
+      </div>
+
+      <aside class="day-card">
+        <span>Valor do dia</span>
+        <strong class="protected-label">Protegido</strong>
+        <small id="topDayCount">0 contas enviadas</small>
+      </aside>
+    </section>
+  </header>
+
+  <main class="container">
+    <section class="section-title">
+      <div>
+        <p class="eyebrow">Comandas abertas</p>
+        <h2>Mesas, Balcão e Extras</h2>
+      </div>
+      <div class="tip">
+        <strong>Dica:</strong> use a busca dentro de cada comanda para achar produtos rapidamente. O total da comanda aparece apenas dentro dela.
+      </div>
+    </section>
+
+    <section id="commandsGrid" class="commands-grid" aria-live="polite"></section>
+
+    <section class="loose-section" id="vendaAvulsa">
+      <div class="loose-panel">
+        <div class="loose-info">
+          <p class="eyebrow">Lançamento manual</p>
+          <h2>Valor avulso</h2>
+          <p>
+            Use esta área quando esquecer de anotar uma comanda. O lançamento entra no fechamento com Comanda e Itens como indefinidos.
+          </p>
+        </div>
+
+        <form id="looseSaleForm" class="loose-form">
+          <label for="looseSaleValue">Valor a adicionar</label>
+          <div class="loose-input-row">
+            <span>R$</span>
+            <input
+              id="looseSaleValue"
+              type="text"
+              inputmode="decimal"
+              placeholder="Ex: 25,50"
+              autocomplete="off"
+            />
+            <button class="btn btn-primary" type="submit">Enviar valor</button>
+          </div>
+          <small>O valor fica oculto na listagem do Valor do Dia e aparece no PDF final.</small>
+        </form>
+      </div>
+    </section>
+
+    <section class="daily-section" id="valorDoDia">
+      <div class="daily-panel">
+        <div class="daily-header">
+          <div>
+            <p class="eyebrow">Fechamento</p>
+            <h2>Valor do dia</h2>
+            <p class="privacy-note">Valores ocultos por segurança. Eles aparecem apenas no PDF gerado ao concluir.</p>
+          </div>
+
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Comanda</th>
+                <th>Itens</th>
+                <th>Pagamento</th>
+                <th>Detalhes dinheiro</th>
+                <th>Horário</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="dailyList">
+              <tr class="empty-row">
+                <td colspan="6">Nenhuma conta enviada ainda.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="daily-actions">
+          <button id="btnClearDay" class="btn btn-soft" type="button">Limpar valor do dia</button>
+          <button id="btnFinishDay" class="btn btn-primary" type="button">Concluir e baixar PDF</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 Bar Azul — Todos os direitos reservados.</p>
+  </footer>
+
+  <dialog id="editModal" class="modal">
+    <form method="dialog" class="modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Editar comanda</p>
+          <h2 id="editTitle">Comanda</h2>
+        </div>
+        <button id="btnCloseEdit" class="close-btn" type="button" aria-label="Fechar">×</button>
+      </div>
+
+      <div class="name-editor">
+        <label for="editCommandName">Nome da comanda</label>
+        <input id="editCommandName" type="text" maxlength="35" />
+      </div>
+
+      <div class="modal-search">
+        <label for="editCommandSearch">Pesquisar produto</label>
+        <input id="editCommandSearch" type="search" placeholder="Ex: Coca, Café, Assado..." autocomplete="off" />
+      </div>
+
+      <div id="editProducts" class="edit-products"></div>
+
+      <div class="modal-actions">
+        <button id="btnCancelEdit" class="btn btn-soft" type="button">Cancelar</button>
+        <button id="btnSaveEdit" class="btn btn-primary" type="button">Salvar alterações</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="paymentModal" class="modal modal-payment">
+    <form method="dialog" class="modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Confirmar pagamento</p>
+          <h2 id="paymentTitle">Enviar comanda</h2>
+        </div>
+        <button id="btnClosePayment" class="close-btn" type="button" aria-label="Fechar">×</button>
+      </div>
+
+      <div class="payment-content">
+        <div class="payment-summary">
+          <span>Valor da comanda</span>
+          <strong id="paymentTotal">R$ 0,00</strong>
+          <small id="paymentItems">Nenhum item selecionado.</small>
+        </div>
+
+        <div class="field-group">
+          <label for="paymentMethod">Forma de pagamento usada</label>
+          <select id="paymentMethod">
+            <option value="" selected>Selecione uma opção</option>
+            <option value="PIX">PIX</option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Cartão de débito">Cartão de débito</option>
+            <option value="Cartão de crédito">Cartão de crédito</option>
+          </select>
+        </div>
+
+        <div id="paymentCashFields" class="cash-fields hidden">
+          <div class="field-group">
+            <label for="paymentCashGiven">Valor dado pelo cliente</label>
+            <input id="paymentCashGiven" type="text" inputmode="decimal" placeholder="Ex: 50,00" autocomplete="off" />
+          </div>
+          <div class="change-preview">
+            <span>Troco</span>
+            <strong id="paymentChange">R$ 0,00</strong>
+          </div>
+        </div>
+
+        <p class="modal-warning">Confira se a conta já foi paga antes de enviar para o Valor do Dia.</p>
+      </div>
+
+      <div class="modal-actions">
+        <button id="btnCancelPayment" class="btn btn-soft" type="button">Cancelar</button>
+        <button id="btnConfirmPayment" class="btn btn-primary" type="button">Confirmar e enviar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dailyEditModal" class="modal modal-daily-edit">
+    <form method="dialog" class="modal-card wide-modal">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Editar lançamento</p>
+          <h2>Valor do dia</h2>
+        </div>
+        <button id="btnCloseDailyEdit" class="close-btn" type="button" aria-label="Fechar">×</button>
+      </div>
+
+      <div class="daily-edit-content">
+        <div class="field-group">
+          <label for="dailyEditOrigin">Comanda</label>
+          <input id="dailyEditOrigin" type="text" maxlength="45" placeholder="Ex: Mesa 01" />
+        </div>
+
+        <div class="modal-search">
+          <label for="dailyEditSearch">Adicionar ou remover itens</label>
+          <input id="dailyEditSearch" type="search" placeholder="Pesquise e ajuste as quantidades" autocomplete="off" />
+        </div>
+
+        <div class="daily-edit-box">
+          <div class="edit-box-header">
+            <strong>Itens do lançamento</strong>
+            <span id="dailyEditItemCounter">0 itens</span>
+          </div>
+          <div id="dailyEditProducts" class="edit-products compact-products"></div>
+        </div>
+
+        <div class="manual-value-box">
+          <div>
+            <strong>Valor avulso/manual</strong>
+            <small>Use apenas se o lançamento não tiver produtos definidos.</small>
+          </div>
+          <input id="dailyEditManualValue" type="text" inputmode="decimal" placeholder="Ex: 25,50" autocomplete="off" />
+        </div>
+
+        <div class="daily-edit-grid">
+          <div class="field-group">
+            <label for="dailyEditPayment">Forma de pagamento</label>
+            <select id="dailyEditPayment">
+              <option value="Indefinido">Indefinido</option>
+              <option value="PIX">PIX</option>
+              <option value="Dinheiro">Dinheiro</option>
+              <option value="Cartão de débito">Cartão de débito</option>
+              <option value="Cartão de crédito">Cartão de crédito</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="dailyEditCashFields" class="cash-fields hidden">
+          <div class="field-group">
+            <label for="dailyEditCashGiven">Valor dado pelo cliente</label>
+            <input id="dailyEditCashGiven" type="text" inputmode="decimal" placeholder="Ex: 50,00" autocomplete="off" />
+          </div>
+          <div class="change-preview">
+            <span>Troco</span>
+            <strong id="dailyEditChange">R$ 0,00</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="btnCancelDailyEdit" class="btn btn-soft" type="button">Cancelar</button>
+        <button id="btnSaveDailyEdit" class="btn btn-primary" type="button">Salvar lançamento</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
